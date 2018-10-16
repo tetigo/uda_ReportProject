@@ -96,76 +96,91 @@ class Report(object):
         '''
             Get top 3 most visited articles
         '''
-        conn = psycopg2.connect(dbname=self.dbname)
-        cursor = conn.cursor()
-        query = '''
-                select a.title, concat(count(l.path), ' views')
-                from log l
-                inner join articles a on a.slug = substring(l.path, 10)
-                group by a.slug, a.title
-                order by count(l.path) desc
-                limit 3;
-            '''
-        cursor.execute(query)
-        result = cursor.fetchall()
-        conn.close()
-        return result
+        try:
+            conn = psycopg2.connect(dbname=self.dbname)
+            cursor = conn.cursor()
+            query = '''
+                    select a.title, concat(count(l.path), ' views')
+                    from log l
+                    inner join articles a on a.slug = substring(l.path, 10)
+                    group by a.slug, a.title
+                    order by count(l.path) desc
+                    limit 3;
+                '''
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Exception as e:
+            conn.close()
+            raise e
+        finally:
+            conn.close()
+        return result if result else None
 
     @decorate_top3_authors
     def get_top3_authors(self):
         '''
             Get top 3 authors from top 3 articles
         '''
-        conn = psycopg2.connect(dbname=self.dbname)
-        cursor = conn.cursor()
-        query = '''
-                select au.name, concat(count(l.path), ' views')
-                from log l
-                inner join articles a on a.slug = substring(l.path, 10)
-                inner join authors au on au.id = a.author
-                group by a.slug, au.name
-                order by count(l.path) desc
-                limit 3;
-            '''
-        cursor.execute(query)
-        result = cursor.fetchall()
-        conn.close()
-        return result
+        try:
+            conn = psycopg2.connect(dbname=self.dbname)
+            cursor = conn.cursor()
+            query = '''
+                    select au.name, concat(count(l.path), ' views')
+                    from log l
+                    inner join articles a on a.slug = substring(l.path, 10)
+                    inner join authors au on au.id = a.author
+                    group by a.slug, au.name
+                    order by count(l.path) desc
+                    limit 3;
+                '''
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Exception as e:
+            conn.close()
+            raise e
+        finally:
+            conn.close()
+        return result if result else None
 
     @decorate_percent1_error
     def get_percent1_error(self):
         '''
             Get date where errors > 1% from all views
         '''
-        conn = psycopg2.connect(dbname=self.dbname)
-        cursor = conn.cursor()
-        query = '''
-                create or replace view failure as
-                    select date(time) date, count(status)
-                    from log
-                    where status not like '200%'
-                    group by date(time)
-                    order by date(time);
+        try:
+            conn = psycopg2.connect(dbname=self.dbname)
+            cursor = conn.cursor()
+            query = '''
+                    create or replace view failure as
+                        select date(time) date, count(status)
+                        from log
+                        where status not like '200%'
+                        group by date(time)
+                        order by date(time);
 
-                create or replace view success as
-                    select date(time) date, count(status)
-                    from log
-                    where status like '200%'
-                    group by date(time)
-                    order by date(time);
+                    create or replace view success as
+                        select date(time) date, count(status)
+                        from log
+                        where status like '200%'
+                        group by date(time)
+                        order by date(time);
 
-                select s.date,
+                    select s.date,
                     concat(round(f.count / s.count::numeric, 8) * 100, ' %')
-                from success s
-                inner join failure f
-                on f.date = s.date
-                where round(f.count / s.count::numeric, 8) * 100 > 1.0
-                order by s.date;
-            '''
-        cursor.execute(query)
-        result = cursor.fetchall()
-        conn.close()
-        return result
+                    from success s
+                    inner join failure f
+                    on f.date = s.date
+                    where round(f.count / s.count::numeric, 8) * 100 > 1.0
+                    order by s.date;
+                '''
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Exception as e:
+            conn.close()
+            raise e
+        finally:
+            conn.close()
+        return result if result else None
 
 
 if __name__ == '__main__':

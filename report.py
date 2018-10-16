@@ -166,11 +166,7 @@ class Report(object):
                         order by date(time);
 
                     select s.date,
-<<<<<<< HEAD
                     concat(round(f.count / s.count::numeric, 8) * 100, ' %')
-=======
-                        concat(round(f.count / s.count::numeric, 8) * 100, ' %')
->>>>>>> a534baf1c446048a355e67a55f55e1b7809cfeab
                     from success s
                     inner join failure f
                     on f.date = s.date

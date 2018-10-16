@@ -4,9 +4,9 @@ A class to get dynamic report about Articles, Authors, Logs in a ficticious site
 This project is about trainning your python db-api and sql skills against a database with over 1.5 million rows.
 
 ### Prerequisites
-You must have Python and PostgreSQL installed. 
-Tested with Python version 2.7.12.
-Tested with PostgreSQL version 9.5.14.
+- You must have Python and PostgreSQL installed. 
+- Tested with Python version 2.7.12.
+- Tested with PostgreSQL version 9.5.14.
 
 ### Setup
 First of all you must have the database installed on your machine.
@@ -38,9 +38,11 @@ report.get_percent1_error()
 ```
 
 ### Important Notes
-I decided to use decorators for ease of command line printing and the possibility of turn them off easily and fast by just commenting the line to be able to reuse the real methods in another purpose.
-I've created 2 views(success and failure) to facilitate the answer of get_percent1_error() method, but both are included in the main query of the method so you do not have to worry about it. =))
-But if you want, you can extract the views out of the query and install them on the database on your own.
+- I decided to use decorators for ease of command line printing and the possibility of turn them off easily and fast by just commenting the line to be able to reuse the real methods in another purpose.
+
+- I've created 2 views(success and failure) to facilitate the answer of get_percent1_error() method, but both are included in the main query of the method so you do not have to worry about it. =))
+
+- But if you want, you can extract the views out of the query and install them on the database on your own.
 
 #### Author
 Tiago Mendes

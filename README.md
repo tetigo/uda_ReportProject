@@ -5,7 +5,7 @@ This project is about trainning your python db-api and sql skills against a data
 
 ### Prerequisites
 You must have Python and PostgreSQL installed. 
-Tested with Python versions 2.7.12 and 3.6.6.
+Tested with Python version 2.7.12.
 Tested with PostgreSQL version 9.5.14.
 
 ### Setup

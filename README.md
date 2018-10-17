@@ -29,10 +29,11 @@ The program itself creates both of them, but if you want to play with
 these views directly in the database you can install them with the 
 following extra steps:
 1. Download the file **create_views.sql** from the link below:
-2. [link](XXXXX dont have the link yet XXXXXXXXX)
-3. Put the downloaded file in the same directory where you have extracted
+-  [link](
+https://github.com/tetigo/uda_ReportProject/blob/master/create_views.sql)
+2. Put the downloaded file in the same directory where you have extracted
 the **newsdata.sql**.
-4. In the command line run: `psql -d news -f create_views.sql`
+3. In the command line run: `psql -d news -f create_views.sql`
 
 Just that!
 Now the database contains 3 tables:

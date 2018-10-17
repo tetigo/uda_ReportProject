@@ -56,17 +56,6 @@ def tags(header0, body0, body1):
     return general_decorator
 
 
-def decorate_percent1_error(function):
-    '''
-        Decorator just to display the percent in a cool format on the screen
-    '''
-    def wrap(self):
-        header('Errors Info')
-        body(self, 'Date', 'Percent', function)
-        footer()
-    return wrap
-
-
 class Report(object):
     '''
         A class to get dynamic report about Articles, Authors, Logs

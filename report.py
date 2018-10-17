@@ -39,26 +39,21 @@ def body(self, col0, col1, function):
         print(str(each[0]) + calc_tabs(str(each[0])) + each[1])
 
 
-def decorate_top3_articles(function):
+def tags(header0, body0, body1):
     '''
-        Decorator just to display the articles in a cool format on the screen
+        Parameters to the decorator for it be general purpose
     '''
-    def wrap(self):
-        header('Articles Info')
-        body(self, 'Top 3 Articles Most Accessed', 'Views', function)
-        footer()
-    return wrap
-
-
-def decorate_top3_authors(function):
-    '''
-        Decorator just to display the authors in a cool format on the screen
-    '''
-    def wrap(self):
-        header('Authors Info')
-        body(self, 'Name', 'Views', function)
-        footer()
-    return wrap
+    def general_decorator(function):
+        '''
+        General decorator to display all info in a cool format on the screen
+        This version is using parameters in the decorator to become general
+        '''
+        def wrap(self):
+            header(header0)
+            body(self, body0, body1, function)
+            footer()
+        return wrap
+    return general_decorator
 
 
 def decorate_percent1_error(function):
@@ -91,7 +86,7 @@ class Report(object):
     def __init__(self, dbname='news'):
         self.dbname = dbname
 
-    @decorate_top3_articles
+    @tags('Articles Info', 'Top 3 Articles Most Accessed', 'Views')
     def get_top3_articles(self):
         '''
             Get top 3 most visited articles
@@ -116,7 +111,7 @@ class Report(object):
             conn.close()
         return result if result else None
 
-    @decorate_top3_authors
+    @tags('Authors Info', 'Name', 'Views')
     def get_top3_authors(self):
         '''
             Get top 3 authors from top 3 articles
@@ -142,7 +137,7 @@ class Report(object):
             conn.close()
         return result if result else None
 
-    @decorate_percent1_error
+    @tags('Errors Info', 'Date', 'Percent')
     def get_percent1_error(self):
         '''
             Get date where errors > 1% from all views

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 
 import psycopg2
 from functools import wraps
@@ -66,7 +66,7 @@ class Report(object):
         Usage:
         Create an instance of Report class and call the methods:
         - get_top3_articles(): get top 3 most visited articles
-        - get_top3_authors(): get top 3 authors from top 3 articles
+        - get_top3_authors(): get top 3 most visited authors
         - get_percent1_error(percent): get date where errors > percent
            from all views
         Observation:
@@ -75,8 +75,21 @@ class Report(object):
         the line to be able to reuse the real methods in another purpose.
     '''
 
-    def __init__(self, dbname='news'):
+    def __init__(self, dbname='news', views='create_views.sql'):
         self.dbname = dbname
+
+        def create_views():
+            try:
+                with open(views) as file:
+                    creating_views = file.read()
+                with psycopg2.connect(dbname=self.dbname) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(creating_views)
+            except Exception as e:
+                raise e
+
+        create_views()
+
 
     @tags('Articles Info', 'Top 3 Articles Most Accessed', 'Views')
     def get_top3_articles(self):
@@ -84,49 +97,45 @@ class Report(object):
             Get top 3 most visited articles
         '''
         try:
-            conn = psycopg2.connect(dbname=self.dbname)
-            cursor = conn.cursor()
-            query = '''
-                    select a.title, concat(count(l.path), ' views')
-                    from log l
-                    inner join articles a on a.slug = substring(l.path, 10)
-                    group by a.slug, a.title
-                    order by count(l.path) desc
-                    limit 3;
-                '''
-            cursor.execute(query)
-            result = cursor.fetchall()
+            with psycopg2.connect(dbname=self.dbname) as conn:
+                cursor = conn.cursor()
+                query = '''
+                        select a.title, concat(count(l.path), ' views')
+                        from log l
+                        inner join articles a on a.slug = substring(l.path, 10)
+                        group by a.slug, a.title
+                        order by count(l.path) desc
+                        limit 3;
+                    '''
+                cursor.execute(query)
+                result = cursor.fetchall()
         except Exception as e:
-            conn.close()
             raise e
-        finally:
-            conn.close()
+        
         return result if result else None
 
     @tags('Authors Info', 'Name', 'Views')
     def get_top3_authors(self):
         '''
-            Get top 3 authors from top 3 articles
+            Get top 3 most visited authors
         '''
         try:
-            conn = psycopg2.connect(dbname=self.dbname)
-            cursor = conn.cursor()
-            query = '''
-                    select au.name, concat(count(l.path), ' views')
-                    from log l
-                    inner join articles a on a.slug = substring(l.path, 10)
-                    inner join authors au on au.id = a.author
-                    group by a.slug, au.name
-                    order by count(l.path) desc
-                    limit 3;
-                '''
-            cursor.execute(query)
-            result = cursor.fetchall()
+            with psycopg2.connect(dbname=self.dbname) as conn:
+                cursor = conn.cursor()
+                query = '''
+                        select au.name, concat(count(l.path), ' views')
+                        from log l
+                        inner join articles a on a.slug = substring(l.path, 10)
+                        inner join authors au on au.id = a.author
+                        group by au.name
+                        order by count(l.path) desc
+                        limit 3;
+                    '''
+                cursor.execute(query)
+                result = cursor.fetchall()
         except Exception as e:
-            conn.close()
             raise e
-        finally:
-            conn.close()
+        
         return result if result else None
 
     @tags('Errors Info', 'Date', 'Percent')
@@ -135,38 +144,22 @@ class Report(object):
             Get date where errors > 1% from all views
         '''
         try:
-            conn = psycopg2.connect(dbname=self.dbname)
-            cursor = conn.cursor()
-            query = '''
-                    create or replace view failure as
-                        select date(time) date, count(status)
-                        from log
-                        where status not like '200%'
-                        group by date(time)
-                        order by date(time);
-
-                    create or replace view success as
-                        select date(time) date, count(status)
-                        from log
-                        where status like '200%'
-                        group by date(time)
-                        order by date(time);
-
-                    select s.date,
-                    concat(round(f.count / s.count::numeric, 8) * 100, ' %')
-                    from success s
-                    inner join failure f
-                    on f.date = s.date
-                    where round(f.count / s.count::numeric, 8) * 100 > 1.0
-                    order by s.date;
-                '''
-            cursor.execute(query)
-            result = cursor.fetchall()
+            with psycopg2.connect(dbname=self.dbname) as conn:
+                cursor = conn.cursor()
+                query = '''
+                        select t.date,
+                        concat(round(f.count / t.count::numeric, 8) * 100, ' %')
+                        from total_access t
+                        inner join failure f
+                        on f.date = t.date
+                        where round(f.count / t.count::numeric, 8) * 100 > 1.0
+                        order by t.date;
+                    '''
+                cursor.execute(query)
+                result = cursor.fetchall()
         except Exception as e:
-            conn.close()
             raise e
-        finally:
-            conn.close()
+        
         return result if result else None
 
 

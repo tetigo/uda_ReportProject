@@ -1,9 +1,9 @@
 
 # Site Info Internal Report Project
-A class to get dynamic report about Articles, Authors, Logs in a 
+A class to get dynamic report about Articles, Authors, Logs in a\ 
 ficticious site.
 
-This project is about trainning your python db-api and sql skills 
+This project is about trainning your python db-api and sql skills\ 
 against a database with over 1.5 million rows.
 
 ### Prerequisites
@@ -31,14 +31,14 @@ The program **report.py** makes use of 2 views to facilitate a query:
 - **total_access**: A view with total of access in a date.
 - **failure**: A view with total of incorrect access in a date.
 
-The program itself creates both of them, but if you want to play with 
-these views directly in the database you can install them with the 
+The program itself creates both of them, but if you want to play with\ 
+these views directly in the database you can install them with the\ 
 following extra steps:
 
 1. Download the file **create_views.sql** from the link below:
 -  [link](
 https://github.com/tetigo/uda_ReportProject/blob/master/create_views.sql)
-2. Put the downloaded file in the same directory where you have extracted
+2. Put the downloaded file in the same directory where you have extracted\
 the **newsdata.sql**.
 3. In the command line run: `psql -d news -f create_views.sql`
 
@@ -71,20 +71,20 @@ In the command line do the following:
 
 That's it! Now it's your turn. =))
 
-Now you are ready to play with the database, tables and views inside it
+Now you are ready to play with the database, tables and views inside it\
 using SQL or go to the next step where you are going to play with Python.
 
 ### Python Report Setup and Running
 Like I've said before, you must have Python 2.7.12 installed. 
 
-Before running the program **report.py** make sure that the file 
+Before running the program **report.py** make sure that the file\ 
 **create_views.sql** is in the same directory of the program.
 
-The program creates the views automatically before using them and it looks
+The program creates the views automatically before using them and it looks\
 for the sql file to install it.
 
-If you have both **report.py** and **create_views.sql** in the same folder
-you can now test the program running the following in the command line:
+If you have both **report.py** and **create_views.sql** in the same folder\
+you can now test the program running the following in the command line:\
 `python report.py`
 
 If everything gone ok you can now see 3 reports info on the screen.
@@ -112,18 +112,18 @@ report.get_top3_articles()
 report.get_top3_authors()
 report.get_percent1_error()
 ```
-Save the file and run it from command line doing this:
+Save the file and run it from command line doing this:\
 `python example.py`
 
-If you do not want to create a new program like above you can run the 
-original file *report.py* like teached above in the *Python Report Setup 
+If you do not want to create a new program like above you can run the\ 
+original file *report.py* like teached above in the *Python Report Setup\ 
 and Running* section.
 
-Also I've decided to use decorators for ease of command line printing and 
-the possibility of turn them off easily and fast by just commenting the line 
+Also I've decided to use decorators for ease of command line printing and\ 
+the possibility of turn them off easily and fast by just commenting the line\ 
 to be able to reuse the real methods in another purpose.
 
-To do that, in the *report.py* comment the next lines using `#` in the
+To do that, in the *report.py* comment the next lines using `#` in the\
 beginning of line just before `@` like so:
 
 - `#@tags('Articles Info', 'Top 3 Articles Most Accessed', 'Views')`
@@ -152,19 +152,19 @@ Now run the program and see the results:
 You got lists to you use in another purpose if you want to.
 
 ### Important Notes
-As I used decorators, our methods are wrapped inside it and since the 
-wrapper method does not carry the name, module and docstring of the 
-original method we got the attributes __name__, __doc__ and __module__ with
+As I used decorators, our methods are wrapped inside it and since the\ 
+wrapper method does not carry the name, module and docstring of the\
+original method we got the attributes __name__, __doc__ and __module__ with\
 info of the wrapper method.
 
-To correct this I've learned the use of **wraps** decorator that is inside
+To correct this I've learned the use of **wraps** decorator that is inside\
 **functools** that comes with Python 2.7.
 
 You can see its use if you look for a line with: **@wraps(function)**
 
 Now you can see the real methods info.
 
-To do so just uncomment (**remove #**) from the lines below and
+To do so just uncomment (**remove #**) from the lines below and\
 run again the program.
 
 ```

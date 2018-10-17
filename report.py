@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 
 import psycopg2
+from functools import wraps
 
 
 def header(text):
@@ -48,6 +49,8 @@ def tags(header0, body0, body1):
         General decorator to display all info in a cool format on the screen
         This version is using parameters in the decorator to become general
         '''
+        @wraps(function)
+        # Returning info from the original method
         def wrap(self):
             header(header0)
             body(self, body0, body1, function)
@@ -173,3 +176,15 @@ if __name__ == '__main__':
     report.get_top3_articles()
     report.get_top3_authors()
     report.get_percent1_error()
+
+    # print(report.get_top3_articles.__module__)
+    # print(report.get_top3_articles.__name__)
+    # print(report.get_top3_articles.__doc__)
+
+    # print(report.get_top3_authors.__module__)
+    # print(report.get_top3_authors.__name__)
+    # print(report.get_top3_authors.__doc__)
+
+    # print(report.get_percent1_error.__module__)
+    # print(report.get_percent1_error.__name__)
+    # print(report.get_percent1_error.__doc__)

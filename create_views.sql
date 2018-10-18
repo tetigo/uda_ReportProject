@@ -1,7 +1,7 @@
 create or replace view failure as
     select date(time) date, count(status)
     from log
-    where status not like '200%'
+    where status != '200 OK'
     group by date(time)
     order by date(time);
 

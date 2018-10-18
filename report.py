@@ -19,25 +19,16 @@ def footer():
     print('-' * 60 + '\n')
 
 
-def calc_tabs(text):
-    tabs = ''
-    size = len(text) / 8
-    if(size >= 4):
-        return '\t'
-    elif(4 > size >= 3):
-        return '\t\t'
-    elif(3 > size >= 2):
-        return '\t\t\t'
-    elif(2 > size >= 1):
-        return '\t\t\t\t'
-    else:
-        return '\t\t\t\t\t'
+def calc_spaces(text):
+    size = len(text)
+    position = 38 - size
+    return ' ' * position
 
 
 def body(self, col0, col1, function):
-    print(col0 + calc_tabs(col0) + col1)
+    print(col0 + calc_spaces(col0) + col1)
     for each in function(self):
-        print(str(each[0]) + calc_tabs(str(each[0])) + each[1])
+        print(str(each[0]) + calc_spaces(str(each[0])) + str(each[1]))
 
 
 def tags(header0, body0, body1):
@@ -90,7 +81,6 @@ class Report(object):
 
         create_views()
 
-
     @tags('Articles Info', 'Top 3 Articles Most Accessed', 'Views')
     def get_top3_articles(self):
         '''
@@ -100,18 +90,19 @@ class Report(object):
             with psycopg2.connect(dbname=self.dbname) as conn:
                 cursor = conn.cursor()
                 query = '''
-                        select a.title, concat(count(l.path), ' views')
-                        from log l
-                        inner join articles a on a.slug = substring(l.path, 10)
-                        group by a.slug, a.title
-                        order by count(l.path) desc
+                        select art.title, concat(count(log.path), ' views')
+                        from log
+                        inner join articles art on
+                        log.path = '/article/' || art.slug
+                        group by art.slug, art.title
+                        order by count(log.path) desc
                         limit 3;
                     '''
                 cursor.execute(query)
                 result = cursor.fetchall()
         except Exception as e:
             raise e
-        
+
         return result if result else None
 
     @tags('Authors Info', 'Name', 'Views')
@@ -123,19 +114,20 @@ class Report(object):
             with psycopg2.connect(dbname=self.dbname) as conn:
                 cursor = conn.cursor()
                 query = '''
-                        select au.name, concat(count(l.path), ' views')
-                        from log l
-                        inner join articles a on a.slug = substring(l.path, 10)
-                        inner join authors au on au.id = a.author
-                        group by au.name
-                        order by count(l.path) desc
+                        select auth.name, concat(count(log.path), ' views')
+                        from log
+                        inner join articles art on
+                        log.path = '/article/' || art.slug
+                        inner join authors auth on auth.id = art.author
+                        group by auth.name
+                        order by count(log.path) desc
                         limit 3;
                     '''
                 cursor.execute(query)
                 result = cursor.fetchall()
         except Exception as e:
             raise e
-        
+
         return result if result else None
 
     @tags('Errors Info', 'Date', 'Percent')
@@ -147,19 +139,19 @@ class Report(object):
             with psycopg2.connect(dbname=self.dbname) as conn:
                 cursor = conn.cursor()
                 query = '''
-                        select t.date,
-                        concat(round(f.count / t.count::numeric, 8) * 100, ' %')
-                        from total_access t
-                        inner join failure f
-                        on f.date = t.date
-                        where round(f.count / t.count::numeric, 8) * 100 > 1.0
-                        order by t.date;
-                    '''
+                select tot.date,
+                concat(round(fail.count / tot.count::numeric, 8) * 100, ' %')
+                from total_access tot
+                inner join failure fail
+                on fail.date = tot.date
+                where round(fail.count / tot.count::numeric, 8) * 100 > 1.0
+                order by tot.date;
+                '''
                 cursor.execute(query)
                 result = cursor.fetchall()
         except Exception as e:
             raise e
-        
+
         return result if result else None
 
 
